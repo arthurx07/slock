@@ -44,7 +44,7 @@ index 5ae738c..3a8da42 100644
  #include <X11/XF86keysym.h>
  #include <Imlib2.h>
  
-@@ -29,6 +29,9 @@
+@@ -26,11 +28,15 @@
  #include "util.h"
  
  char *argv0;
@@ -52,9 +52,7 @@ index 5ae738c..3a8da42 100644
 +struct pam_conv pamc = {pam_conv, NULL};
 +char passwd[256];
  
- time_t lasttouched;
- int runflag = 0;
-@@ -37,6 +40,7 @@
+ enum {
  	INIT,
  	INPUT,
  	FAILED,
@@ -118,36 +116,36 @@ index 5ae738c..3a8da42 100644
  
  	len = 0;
  	running = 1;
-@@ -216,10 +220,26 @@
- 				case XK_Return:
- 					passwd[len] = '\0';
- 					errno = 0;
--					if (!(inputhash = crypt(passwd, hash)))
--						fprintf(stderr, "slock: crypt: %s\n", strerror(errno));
-+					retval = pam_start(pam_service, hash, &pamc, &pamh);
-+					color = PAM;
-+					for (screen = 0; screen < nscreens; screen++) {
-+						XSetWindowBackground(dpy, locks[screen]->win, locks[screen]->colors[color]);
-+						XClearWindow(dpy, locks[screen]->win);
-+						XRaiseWindow(dpy, locks[screen]->win);
-+					}
-+					XSync(dpy, False);
+@@ -160,10 +194,26 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
+ 			case XK_Return:
+ 				passwd[len] = '\0';
+ 				errno = 0;
+-				if (!(inputhash = crypt(passwd, hash)))
+-					fprintf(stderr, "slock: crypt: %s\n", strerror(errno));
++				retval = pam_start(pam_service, hash, &pamc, &pamh);
++				color = PAM;
++				for (screen = 0; screen < nscreens; screen++) {
++					XSetWindowBackground(dpy, locks[screen]->win, locks[screen]->colors[color]);
++					XClearWindow(dpy, locks[screen]->win);
++					XRaiseWindow(dpy, locks[screen]->win);
++				}
++				XSync(dpy, False);
 +
-+					if (retval == PAM_SUCCESS)
-+						retval = pam_authenticate(pamh, 0);
-+					if (retval == PAM_SUCCESS)
-+						retval = pam_acct_mgmt(pamh, 0);
++				if (retval == PAM_SUCCESS)
++					retval = pam_authenticate(pamh, 0);
++				if (retval == PAM_SUCCESS)
++					retval = pam_acct_mgmt(pamh, 0);
 +
-+					running = 1;
-+					if (retval == PAM_SUCCESS)
-+						running = 0;
- 					else
--						running = !!strcmp(inputhash, hash);
-+						fprintf(stderr, "slock: %s\n", pam_strerror(pamh, retval));
-+					pam_end(pamh, retval);
- 					if (running) {
- 						XBell(dpy, 100);
- 						failure = 1;
++				running = 1;
++				if (retval == PAM_SUCCESS)
++					running = 0;
+ 				else
+-					running = !!strcmp(inputhash, hash);
++					fprintf(stderr, "slock: %s\n", pam_strerror(pamh, retval));
++				pam_end(pamh, retval);
+ 				if (running) {
+ 					XBell(dpy, 100);
+ 					failure = 1;
 @@ -339,10 +389,9 @@ main(int argc, char **argv) {
  	dontkillme();
  #endif
