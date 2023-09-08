@@ -11,4 +11,4 @@ index b4bcb10..bcccba7 100644
  
  /* Background image path, should be available to the user above */
 -static const char* background_image = "";
-+static const char* background_image = "/usr/share/backgrounds/kwal";
++static const char* background_image = "/home/kumao/.config/wpg/.current";
