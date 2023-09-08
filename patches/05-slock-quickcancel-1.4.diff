@@ -39,11 +39,11 @@ index d2f0886..f7462ee 100644
  #include <sys/types.h>
  #include <X11/extensions/Xrandr.h>
  #include <X11/keysym.h>
-@@ -24,6 +25,8 @@
+@@ -31,6 +31,8 @@ static int pam_conv(int num_msg, const struct pam_message **msg, struct pam_resp
+ struct pam_conv pamc = {pam_conv, NULL};
+ char passwd[256];
  
- char *argv0;
- 
-+static time_t locktime;
++static time_t locktime
 +
  enum {
  	INIT,
