@@ -1,8 +1,8 @@
 diff --git a/config.def.h b/config.def.h
-index 9855e21..19e7f62 100644
+index 60c21d6..7bad44d 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -6,7 +6,11 @@ static const char *colorname[NUMCOLS] = {
+@@ -6,11 +6,15 @@ static const char *colorname[NUMCOLS] = {
  	[INIT] =   "black",     /* after initialization */
  	[INPUT] =  "#005577",   /* during input */
  	[FAILED] = "#CC3333",   /* wrong password */
@@ -11,9 +11,13 @@ index 9855e21..19e7f62 100644
  
  /* treat a cleared input like a wrong password (color) */
  static const int failonclear = 1;
-+
+ 
 +/* PAM service that's used for authentication */
 +static const char* pam_service = "login";
++
+ /* Background image path, should be available to the user above */
+ static const char* background_image = "";
+ 
 diff --git a/config.mk b/config.mk
 index 74429ae..6e82074 100644
 --- a/config.mk
@@ -22,8 +26,8 @@ index 74429ae..6e82074 100644
  
  # includes and libs
  INCS = -I. -I/usr/include -I${X11INC}
--LIBS = -L/usr/lib -lc -lcrypt -L${X11LIB} -lX11 -lXext -lXrandr
-+LIBS = -L/usr/lib -lc -lcrypt -L${X11LIB} -lX11 -lXext -lXrandr -lpam
+-LIBS = -L/usr/lib -lc -lcrypt -L${X11LIB} -lX11 -lXext -lXrandr -lImlib2
++LIBS = -L/usr/lib -lc -lcrypt -L${X11LIB} -lX11 -lXext -lXrandr -lImlib2 -lpam
  
  # flags
  CPPFLAGS = -DVERSION=\"${VERSION}\" -D_DEFAULT_SOURCE -DHAVE_SHADOW_H
@@ -32,9 +36,9 @@ index 5ae738c..3a8da42 100644
 --- a/slock.c
 +++ b/slock.c
 @@ -18,16 +18,22 @@
- #include <X11/keysym.h>
- #include <X11/Xlib.h>
  #include <X11/Xutil.h>
+ #include <Imlib2.h>
+ #include <X11/XF86keysym.h>
 +#include <security/pam_appl.h>
 +#include <security/pam_misc.h>
  
