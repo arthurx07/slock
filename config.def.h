@@ -9,6 +9,16 @@ static const char *colorname[NUMCOLS] = {
 	[PAM] =    "#9400D3",   /* waiting for PAM */
 };
 
+/*
+* Xresources preferences to load at startup
+*/
+ResourcePref resources[] = {
+		{ "color0",       STRING,  &colorname[INIT] },
+		{ "color4",       STRING,  &colorname[INPUT] },
+		{ "color1",       STRING,  &colorname[FAILED] },
+		{ "color3",       STRING,  &colorname[PAM] },
+};
+
 /* treat a cleared input like a wrong password (color) */
 static const int failonclear = 1;
 
