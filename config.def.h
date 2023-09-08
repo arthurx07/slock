@@ -29,7 +29,7 @@ static const int timetocancel = 4;
 static const char* pam_service = "login";
 
 /* Background image path, should be available to the user above */
-static const char* background_image = "";
+static const char* background_image = "/home/kumao/.config/wpg/.current";
 
 /* allow control key to trigger fail on clear */
-static const int controlkeyclear = 0;
+static const int controlkeyclear = 1;
