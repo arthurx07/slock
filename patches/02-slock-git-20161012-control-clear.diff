@@ -12,11 +12,10 @@ diff --git a/config.def.h b/config.def.h
 index eb88b3d..b8f16eb 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -13,3 +13,7 @@ static const int failonclear = 1;
+@@ -13,3 +13,6 @@ static const int failonclear = 1;
  
  /* Background image path, should be available to the user above */
  static const char* background_image = "";
-+
 +
 +/* allow control key to trigger fail on clear */
 +static const int controlkeyclear = 0;
