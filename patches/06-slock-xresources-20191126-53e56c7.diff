@@ -13,30 +13,23 @@ diff --git a/config.def.h b/config.def.h
 index 6288856..bfc1ba0 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -3,11 +3,21 @@ static const char *user  = "nobody";
- static const char *group = "nogroup";
- 
- static const char *colorname[NUMCOLS] = {
--	[INIT] =   "black",     /* after initialization */
--	[INPUT] =  "#005577",   /* during input */
-+	[INIT] = "black",       /* after initialization */
-+	[INPUT] = "#005577",    /* during input */
- 	[FAILED] = "#CC3333",   /* wrong password */
- 	[CAPS] = "red",         /* CapsLock on */
+@@ -9,6 +9,16 @@ static const char *colorname[NUMCOLS] = {
+ 	[PAM] =    "#9400D3",   /* waiting for PAM */
  };
  
 +/*
-+ * Xresources preferences to load at startup
-+ */
++* Xresources preferences to load at startup
++*/
 +ResourcePref resources[] = {
 +		{ "color0",       STRING,  &colorname[INIT] },
 +		{ "color4",       STRING,  &colorname[INPUT] },
 +		{ "color1",       STRING,  &colorname[FAILED] },
-+		{ "color3",       STRING,  &colorname[CAPS] },
++		{ "color3",       STRING,  &colorname[PAM] },
 +};
 +
  /* treat a cleared input like a wrong password (color) */
  static const int failonclear = 1;
+ 
 diff --git a/slock.c b/slock.c
 index 5f4fb7a..2395547 100644
 --- a/slock.c
@@ -52,11 +45,11 @@ index 5f4fb7a..2395547 100644
 @@ -19,6 +20,7 @@
  #include <X11/Xlib.h>
  #include <X11/Xutil.h>
- #include <X11/XKBlib.h>
+ #include <Imlib2.h>
 +#include <X11/Xresource.h>
- 
- #include "arg.h"
- #include "util.h"
+ #include <X11/XF86keysym.h>
+ #include <security/pam_appl.h>
+ #include <security/pam_misc.h>
 @@ -46,6 +48,19 @@ struct xrandr {
  	int errbase;
  };
@@ -76,7 +69,7 @@ index 5f4fb7a..2395547 100644
 +
  #include "config.h"
  
- static void
+ Imlib_Image image;
 @@ -306,6 +321,57 @@ lockscreen(Display *dpy, struct xrandr *rr, int screen)
  	return NULL;
  }
@@ -136,8 +129,8 @@ index 5f4fb7a..2395547 100644
  usage(void)
  {
 @@ -364,6 +430,8 @@ main(int argc, char **argv) {
- 	if (setuid(duid) < 0)
- 		die("slock: setuid: %s\n", strerror(errno));
+         imlib_free_image();
+         imlib_context_set_image(image);
  
 +	config_init(dpy);
 +
