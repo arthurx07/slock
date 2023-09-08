@@ -34,7 +34,7 @@ static int pam_conv(int num_msg, const struct pam_message **msg, struct pam_resp
 struct pam_conv pamc = {pam_conv, NULL};
 char passwd[256];
 
-static time_t locktime
+static time_t locktime;
 
 enum {
 	INIT,

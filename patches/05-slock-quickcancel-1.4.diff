@@ -43,7 +43,7 @@ index d2f0886..f7462ee 100644
  struct pam_conv pamc = {pam_conv, NULL};
  char passwd[256];
  
-+static time_t locktime
++static time_t locktime;
 +
  enum {
  	INIT,
